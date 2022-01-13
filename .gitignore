@@ -127,3 +127,7 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Ignore CSS
+app/static/sass/main.css
+app/static/sass/main.css.map
