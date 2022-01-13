@@ -37,17 +37,19 @@ app.config['MYSQL_USER'] = config.MYSQL_USERNAME
 app.config['MYSQL_PASSWORD'] = config.MYSQL_PASSWORD
 app.config['MYSQL_DB'] = config.MYSQL_DB_NAME
 
-#login
+
+# login
 class Users:
     mysql = MySQL(app)
 
-@app.route('/login',methods=['Get','Post'])
+
+@app.route('/login', methods=['Get', 'Post'])
 @limiter.limit("10 per minute")
 def login():
     print(request.form)
     print(1)
     if 'loggedin' in session:
-        flash('already logged in' ,'success')
+        flash('already logged in', 'success')
         return redirect('/dashboard')
     if request.method == 'POST' and 'username' in request.form and 'password' in request.form:
         print(2)
@@ -74,24 +76,27 @@ def login():
             return render_template('login.html')
     return render_template('login.html')
 
-@app.route('/register',methods=['Get','Post'])
+
+@app.route('/register', methods=['Get', 'Post'])
 def register():
-    if request.method == 'POST' :
+    if request.method == 'POST':
         if request.form.get('invitecode') != config.INVITE_CODE:
-            flash("Sorry, You can't register without an invition code right now. If you want to get notified about public access day, return to mainpage and submit your email for out newsletter.",'info')
+            flash(
+                "Sorry, You can't register without an invition code right now. If you want to get notified about public access day, return to mainpage and submit your email for out newsletter.",
+                'info')
         username = request.form.get('username')
         password = request.form.get('password')
         confirmpassword = request.form.get('confirmpassword')
         email = request.form.get('email')
         phone = request.form.get('phone')
         if not username or not password or not email:
-            flash('Please fill out the form!','danger')
+            flash('Please fill out the form!', 'danger')
             return redirect('/admin/new_user')
         elif not re.match(r'[^@]+@[^@]+\.[^@]+', email):
-            flash('Invalid email address!','danger')
+            flash('Invalid email address!', 'danger')
             return redirect('/admin/new_user')
         elif not re.match(r'[A-Za-z0-9]+', username):
-            flash('Username must contain only characters and numbers!','danger')
+            flash('Username must contain only characters and numbers!', 'danger')
             return redirect('/admin/new_user')
         elif password != confirmpassword:
             flash("The Passwords doesn't match", 'danger')
@@ -100,23 +105,24 @@ def register():
         cur.execute(f"SELECT * FROM USERS WHERE username = '{username}'")
         userex = cur.fetchone()
         if userex:
-            flash('Username already exists!','warning')
+            flash('Username already exists!', 'warning')
             return redirect('/admin/new_user')
         else:
-            createuser(username,password,email,phone)
-            flash('Registration was succesfull','success')
+            createuser(username, password, email, phone)
+            flash('Registration was succesfull', 'success')
             return redirect('/')
 
     elif request.method == 'POST':
-        flash('Please fill out the form!','danger')
+        flash('Please fill out the form!', 'danger')
         return redirect('/admin/new_user')
     if request.referrer == 'http://localhost:5000/admin/new_user' or request.referrer == None:
         referrer = 'http://localhost:5000/admin'
     else:
         referrer = request.referrer
-    return render_template('register.html',data={'referrer':referrer})
+    return render_template('register.html', data={'referrer': referrer})
 
-def createuser(username,password,email,phone):
+
+def createuser(username, password, email, phone):
     db = get_database_connection()
     cur = db.cursor()
     cur.execute("SELECT count(*) FROM USERS")
@@ -126,21 +132,25 @@ def createuser(username,password,email,phone):
     cur.execute(f"INSERT INTO USERS VALUES ({uid},'{username}','{passhash}','{email}','{phone}','{date}');")
     db.commit()
     db.close()
+
+
 # DataBase
 def get_database_connection():
     """connects to the MySQL database and returns the connection"""
     return mysql.connector.connect(host=config.MYSQL_HOST,
-                           user=config.MYSQL_USERNAME,
-                           passwd=config.MYSQL_PASSWORD,
-                           db=config.MYSQL_DB_NAME,
-                           charset='utf8')
+                                   user=config.MYSQL_USERNAME,
+                                   passwd=config.MYSQL_PASSWORD,
+                                   db=config.MYSQL_DB_NAME,
+                                   charset='utf8')
 
-#Upload Voices
+
+# Upload Voices
 @app.route('/uploadfile')
 def upload_file():
-   return render_template('upload.html')
+    return render_template('upload.html')
 
-@app.route('/upload',methods=['Post'])
+
+@app.route('/upload', methods=['Post'])
 def upload():
     # check if the post request has the file part
     if 'file' not in request.files:
@@ -167,9 +177,11 @@ def upload():
         flash('File uploaded', 'info')
         return redirect('/')
 
+
 def allowed_file(filename):
     """ checks the extension of the passed filename to be in the allowed extensions"""
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
 
 def createfilename():
     """return new file id"""
@@ -177,13 +189,9 @@ def createfilename():
     cur = db.cursor()
     cur.execute('SELECT count(*) FROM VOICES;')
     newfilename = cur.fetchone()[0]
-    return str(newfilename)      
+    return str(newfilename)
+
 
 @app.route('/')
 def home():
     return render_template('home.html')
-
-
-
-if __name__ == '__main__':
-    app.run(debug = True)
