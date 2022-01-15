@@ -4,9 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="35a80b04-432d-4842-b549-2ada89fb3c16" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/app/static/js/jquery-3.6.0.min.js" beforeDir="false" afterPath="$PROJECT_DIR$/app/static/js/jquery.js" afterDir="false" />
-    </list>
+    <list default="true" id="35a80b04-432d-4842-b549-2ada89fb3c16" name="Default Changelist" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -106,7 +104,7 @@
       <option name="presentableId" value="Default" />
       <updated>1587301643018</updated>
       <workItem from="1642091618361" duration="61000" />
-      <workItem from="1642091703270" duration="985000" />
+      <workItem from="1642091703270" duration="1091000" />
     </task>
     <servers />
   </component>
